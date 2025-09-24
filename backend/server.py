@@ -265,8 +265,8 @@ def generate_pdf_report(project: TokenomicsProject) -> bytes:
     # Title
     c.setFont("Helvetica-Bold", 24)
     c.setFillColor(primary_color)
-    c.drawCentredText(width/2, height-50, f"{project.project_name}")
-    c.drawCentredText(width/2, height-75, "Tokenomics Design")
+    c.drawCentredString(width/2, height-50, f"{project.project_name}")
+    c.drawCentredString(width/2, height-75, "Tokenomics Design")
     
     # Project details
     y_pos = height - 120

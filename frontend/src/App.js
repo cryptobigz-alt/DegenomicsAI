@@ -1,54 +1,597 @@
-import { useEffect } from "react";
-import "./App.css";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from 'recharts';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import "./App.css";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
+// Animated Background Component
+const AnimatedBackground = () => {
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
+    <div className="animated-background">
+      <div className="grid-overlay"></div>
+      <div className="particles">
+        {[...Array(50)].map((_, i) => (
+          <div key={i} className="particle" style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 4}s`,
+            animationDuration: `${4 + Math.random() * 4}s`
+          }}></div>
+        ))}
+      </div>
+      <div className="floating-shapes">
+        {[...Array(10)].map((_, i) => (
+          <div key={i} className={`shape shape-${i % 3}`} style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 6}s`
+          }}></div>
+        ))}
+      </div>
     </div>
   );
 };
 
-function App() {
+// Hero Section
+const HeroSection = ({ onGetStarted }) => {
+  return (
+    <section className="hero-section">
+      <div className="hero-content">
+        <div className="hero-text">
+          <h1 className="hero-title">
+            <span className="gradient-text">Tokenomics AI Agent</span>
+            <br />
+            Design Your Token Economy
+          </h1>
+          <p className="hero-subtitle">
+            Create professional, investor-ready tokenomics designs powered by advanced AI. 
+            Get comprehensive token distribution models, vesting schedules, and economic analysis in minutes.
+          </p>
+          <div className="hero-features">
+            <div className="feature-item">
+              <div className="feature-icon">⚡</div>
+              <span>AI-Powered Analysis</span>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon">📊</div>
+              <span>Visual Charts & Reports</span>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon">💼</div>
+              <span>Investor-Ready PDFs</span>
+            </div>
+          </div>
+          <button 
+            className="hero-cta-btn"
+            onClick={onGetStarted}
+            data-testid="get-started-btn"
+          >
+            <span>Generate Tokenomics</span>
+            <div className="btn-shimmer"></div>
+          </button>
+        </div>
+        <div className="hero-visual">
+          <div className="cyber-card">
+            <div className="card-content">
+              <div className="metric">
+                <span className="metric-value">79%</span>
+                <span className="metric-label">Success Rate</span>
+              </div>
+              <div className="metric">
+                <span className="metric-value">1000+</span>
+                <span className="metric-label">Projects Designed</span>
+              </div>
+            </div>
+            <div className="card-glow"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Tokenomics Form
+const TokenomicsForm = ({ onSubmit, isLoading }) => {
+  const [formData, setFormData] = useState({
+    project_name: '',
+    project_type: 'DeFi',
+    target_audience: 'retail',
+    funding_goals: '',
+    planned_raise_size: '',
+    desired_utility: [],
+    additional_info: ''
+  });
+
+  const projectTypes = ['DeFi', 'NFT', 'GameFi', 'L2 infra', 'DAO'];
+  const audiences = ['retail', 'institutional', 'both'];
+  const utilities = [
+    'staking', 'governance', 'marketplace currency', 'fee discounts', 
+    'access rights', 'liquidity mining', 'yield farming'
+  ];
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleUtilityToggle = (utility) => {
+    setFormData(prev => ({
+      ...prev,
+      desired_utility: prev.desired_utility.includes(utility)
+        ? prev.desired_utility.filter(u => u !== utility)
+        : [...prev.desired_utility, utility]
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <div className="form-container">
+      <div className="form-header">
+        <h2 className="form-title">Project Requirements</h2>
+        <p className="form-subtitle">Tell us about your project to generate custom tokenomics</p>
+      </div>
+      
+      <form onSubmit={handleSubmit} className="tokenomics-form" data-testid="tokenomics-form">
+        <div className="form-grid">
+          <div className="form-group">
+            <label className="form-label">Project Name</label>
+            <input
+              type="text"
+              value={formData.project_name}
+              onChange={(e) => handleInputChange('project_name', e.target.value)}
+              className="form-input"
+              placeholder="Enter your project name"
+              data-testid="project-name-input"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Project Type</label>
+            <select
+              value={formData.project_type}
+              onChange={(e) => handleInputChange('project_type', e.target.value)}
+              className="form-select"
+              data-testid="project-type-select"
+            >
+              {projectTypes.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Target Audience</label>
+            <select
+              value={formData.target_audience}
+              onChange={(e) => handleInputChange('target_audience', e.target.value)}
+              className="form-select"
+              data-testid="target-audience-select"
+            >
+              {audiences.map(audience => (
+                <option key={audience} value={audience}>
+                  {audience.charAt(0).toUpperCase() + audience.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Funding Goals</label>
+            <input
+              type="text"
+              value={formData.funding_goals}
+              onChange={(e) => handleInputChange('funding_goals', e.target.value)}
+              className="form-input"
+              placeholder="e.g., Seed round, Series A, Community launch"
+              data-testid="funding-goals-input"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Planned Raise Size (Optional)</label>
+            <input
+              type="text"
+              value={formData.planned_raise_size}
+              onChange={(e) => handleInputChange('planned_raise_size', e.target.value)}
+              className="form-input"
+              placeholder="e.g., $500K, $2M, $10M"
+              data-testid="raise-size-input"
+            />
+          </div>
+
+          <div className="form-group full-width">
+            <label className="form-label">Desired Utility</label>
+            <div className="utility-grid">
+              {utilities.map(utility => (
+                <button
+                  key={utility}
+                  type="button"
+                  onClick={() => handleUtilityToggle(utility)}
+                  className={`utility-btn ${formData.desired_utility.includes(utility) ? 'active' : ''}`}
+                  data-testid={`utility-${utility.replace(' ', '-')}`}
+                >
+                  {utility}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="form-group full-width">
+            <label className="form-label">Additional Information (Optional)</label>
+            <textarea
+              value={formData.additional_info}
+              onChange={(e) => handleInputChange('additional_info', e.target.value)}
+              className="form-textarea"
+              placeholder="Any specific requirements or constraints..."
+              rows="4"
+              data-testid="additional-info-textarea"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="submit-btn"
+          data-testid="generate-tokenomics-btn"
+        >
+          {isLoading ? (
+            <div className="loading-spinner">Generating...</div>
+          ) : (
+            <>
+              <span>Generate Tokenomics</span>
+              <div className="btn-glow"></div>
+            </>
+          )}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+// Results Display
+const TokenomicsResults = ({ results, onPayment, onDownloadPDF }) => {
+  const { project, chart_data } = results;
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="chart-tooltip">
+          <p className="tooltip-label">{`${label}: ${payload[0].value}%`}</p>
+          <p className="tooltip-value">{`${payload[0].payload.tokens.toLocaleString()} tokens`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="results-container" data-testid="tokenomics-results">
+      <div className="results-header">
+        <h2 className="results-title">{project.project_name}</h2>
+        <div className="results-actions">
+          <button 
+            className="action-btn primary"
+            onClick={onPayment}
+            data-testid="proceed-payment-btn"
+          >
+            Get Full Report ($79)
+          </button>
+        </div>
+      </div>
+
+      <div className="results-grid">
+        {/* Token Distribution Chart */}
+        <div className="result-card">
+          <h3 className="card-title">Token Distribution</h3>
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={chart_data}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                  stroke="#00FFA3"
+                  strokeWidth={2}
+                >
+                  {chart_data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="chart-legend">
+              {chart_data.map((item, index) => (
+                <div key={index} className="legend-item">
+                  <div 
+                    className="legend-color" 
+                    style={{ backgroundColor: item.color }}
+                  ></div>
+                  <span>{item.name}: {item.value}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Allocation Details */}
+        <div className="result-card">
+          <h3 className="card-title">Allocation Breakdown</h3>
+          <div className="allocation-list">
+            {project.allocations.map((allocation, index) => (
+              <div key={index} className="allocation-item">
+                <div className="allocation-header">
+                  <span className="allocation-category">{allocation.category}</span>
+                  <span className="allocation-percentage">{allocation.percentage}%</span>
+                </div>
+                <div className="allocation-details">
+                  <p className="allocation-tokens">{allocation.tokens.toLocaleString()} tokens</p>
+                  <p className="allocation-description">{allocation.description}</p>
+                  <div className="vesting-info">
+                    <span className="vesting-label">Vesting:</span>
+                    <span className="vesting-schedule">{allocation.vesting_schedule}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Narrative */}
+        <div className="result-card full-width">
+          <h3 className="card-title">Economic Model</h3>
+          <div className="narrative-content">
+            <p>{project.narrative}</p>
+          </div>
+        </div>
+
+        {/* Risks and Comparables */}
+        <div className="result-card">
+          <h3 className="card-title">Key Risks</h3>
+          <ul className="risk-list">
+            {project.risks.map((risk, index) => (
+              <li key={index} className="risk-item">{risk}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="result-card">
+          <h3 className="card-title">Comparable Projects</h3>
+          <div className="comparable-list">
+            {project.comparable_projects.map((project, index) => (
+              <span key={index} className="comparable-tag">{project}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Payment Component
+const PaymentSection = ({ packageId = 'basic', onSuccess }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const packages = {
+    basic: { amount: 79, name: 'Basic Package', features: ['PDF Report', 'Charts', 'Token Distribution'] },
+    pro: { amount: 199, name: 'Pro Package', features: ['Multiple Iterations', 'Advanced Analysis', 'Benchmark Comparisons'] },
+    premium: { amount: 499, name: 'Premium Package', features: ['Investor Deck', 'Smart Contract Template', 'Consultation Call'] }
+  };
+
+  const initiatePayment = async () => {
+    setIsProcessing(true);
+    try {
+      const originUrl = window.location.origin;
+      const response = await axios.post(`${API}/payments/checkout/session`, null, {
+        params: {
+          package_id: packageId,
+          origin_url: originUrl
+        }
+      });
+      
+      if (response.data.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Payment initialization failed. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const selectedPackage = packages[packageId] || packages.basic;
+
+  return (
+    <div className="payment-section">
+      <div className="payment-card">
+        <h3 className="payment-title">Complete Your Purchase</h3>
+        <div className="package-details">
+          <h4 className="package-name">{selectedPackage.name}</h4>
+          <div className="package-price">${selectedPackage.amount}</div>
+          <ul className="package-features">
+            {selectedPackage.features.map((feature, index) => (
+              <li key={index} className="feature-item">
+                <span className="feature-check">✓</span>
+                {feature}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <button
+          onClick={initiatePayment}
+          disabled={isProcessing}
+          className="payment-btn"
+          data-testid="payment-btn"
+        >
+          {isProcessing ? 'Processing...' : `Pay $${selectedPackage.amount}`}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Success Page
+const SuccessPage = () => {
+  const [paymentStatus, setPaymentStatus] = useState('checking');
+  const urlParams = new URLSearchParams(window.location.search);
+  const sessionId = urlParams.get('session_id');
+
+  useEffect(() => {
+    if (sessionId) {
+      checkPaymentStatus(sessionId);
+    }
+  }, [sessionId]);
+
+  const checkPaymentStatus = async (sessionId, attempts = 0) => {
+    const maxAttempts = 5;
+    
+    if (attempts >= maxAttempts) {
+      setPaymentStatus('timeout');
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${API}/payments/checkout/status/${sessionId}`);
+      
+      if (response.data.payment_status === 'paid') {
+        setPaymentStatus('success');
+      } else if (response.data.status === 'expired') {
+        setPaymentStatus('failed');
+      } else {
+        // Continue polling
+        setTimeout(() => checkPaymentStatus(sessionId, attempts + 1), 2000);
+      }
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+      setPaymentStatus('error');
+    }
+  };
+
+  return (
+    <div className="success-page">
+      <div className="success-content">
+        {paymentStatus === 'checking' && (
+          <div className="status-message">
+            <div className="loading-spinner"></div>
+            <h2>Processing Payment...</h2>
+            <p>Please wait while we verify your payment.</p>
+          </div>
+        )}
+        
+        {paymentStatus === 'success' && (
+          <div className="status-message success">
+            <div className="success-icon">✓</div>
+            <h2>Payment Successful!</h2>
+            <p>Thank you for your purchase. Your tokenomics report will be ready shortly.</p>
+          </div>
+        )}
+        
+        {paymentStatus === 'failed' && (
+          <div className="status-message error">
+            <div className="error-icon">✕</div>
+            <h2>Payment Failed</h2>
+            <p>Your payment could not be processed. Please try again.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Main App Component
+const App = () => {
+  const [currentStep, setCurrentStep] = useState('hero'); // hero, form, results, payment
+  const [tokenomicsData, setTokenomicsData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleGetStarted = () => {
+    setCurrentStep('form');
+  };
+
+  const handleFormSubmit = async (formData) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await axios.post(`${API}/tokenomics/generate`, formData);
+      setTokenomicsData(response.data);
+      setCurrentStep('results');
+    } catch (error) {
+      console.error('Error generating tokenomics:', error);
+      setError('Failed to generate tokenomics. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePayment = () => {
+    setCurrentStep('payment');
+  };
+
+  const handleDownloadPDF = async () => {
+    if (tokenomicsData?.project?.id) {
+      window.open(`${API}/tokenomics/${tokenomicsData.project.id}/pdf`, '_blank');
+    }
+  };
+
   return (
     <div className="App">
+      <AnimatedBackground />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/" element={
+            <main className="main-content">
+              {currentStep === 'hero' && (
+                <HeroSection onGetStarted={handleGetStarted} />
+              )}
+              
+              {currentStep === 'form' && (
+                <TokenomicsForm 
+                  onSubmit={handleFormSubmit}
+                  isLoading={isLoading}
+                />
+              )}
+              
+              {currentStep === 'results' && tokenomicsData && (
+                <TokenomicsResults 
+                  results={tokenomicsData}
+                  onPayment={handlePayment}
+                  onDownloadPDF={handleDownloadPDF}
+                />
+              )}
+              
+              {currentStep === 'payment' && (
+                <PaymentSection onSuccess={() => setCurrentStep('hero')} />
+              )}
+              
+              {error && (
+                <div className="error-message" data-testid="error-message">
+                  {error}
+                </div>
+              )}
+            </main>
+          } />
         </Routes>
       </BrowserRouter>
     </div>
   );
-}
+};
 
 export default App;

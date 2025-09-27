@@ -498,6 +498,179 @@ async def download_pdf(project_id: str):
         filename=f"{project.project_name}_Tokenomics.pdf"
     )
 
+# Crypto payment routes
+@api_router.post("/crypto/payment-request")
+async def create_crypto_payment_request(request: CryptoPaymentRequest):
+    """Create crypto payment request with current SOL prices"""
+    try:
+        if request.package_type not in CRYPTO_PRICING:
+            raise HTTPException(status_code=400, detail="Invalid package type")
+        
+        # Get current SOL price
+        crypto_prices = await get_crypto_prices()
+        sol_price = crypto_prices.get('SOL', 100)
+        
+        package = CRYPTO_PRICING[request.package_type]
+        amount_sol = round(package["amount_usd"] / sol_price, 4)
+        
+        # Create payment record
+        payment = CryptoPayment(
+            user_wallet=request.wallet_address,
+            amount=amount_sol,
+            currency=request.currency,
+            network=request.network,
+            package_type=request.package_type,
+            status="pending"
+        )
+        
+        # Save to database
+        payment_dict = payment.dict()
+        payment_dict['created_at'] = payment_dict['created_at'].isoformat()
+        payment_dict['confirmed_at'] = None
+        await db.crypto_payments.insert_one(payment_dict)
+        
+        return {
+            "payment_id": payment.id,
+            "amount_sol": amount_sol,
+            "amount_usd": package["amount_usd"],
+            "payment_address": PAYMENT_WALLETS["solana"],
+            "package_name": package["name"],
+            "sol_price": sol_price
+        }
+        
+    except Exception as e:
+        logger.error(f"Error creating crypto payment request: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/crypto/payment-confirm")
+async def confirm_crypto_payment(
+    payment_id: str, 
+    tx_hash: str, 
+    wallet_address: str
+):
+    """Confirm crypto payment with transaction hash"""
+    try:
+        # Update payment record
+        result = await db.crypto_payments.update_one(
+            {"id": payment_id, "user_wallet": wallet_address},
+            {
+                "$set": {
+                    "tx_hash": tx_hash,
+                    "status": "confirmed",
+                    "confirmed_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Payment not found")
+        
+        # Get or create user profile
+        user_profile = await db.user_profiles.find_one({"wallet_address": wallet_address})
+        if not user_profile:
+            profile = UserProfile(
+                wallet_address=wallet_address,
+                wallet_type="phantom",
+                network="solana"
+            )
+            profile_dict = profile.dict()
+            profile_dict['created_at'] = profile_dict['created_at'].isoformat()
+            profile_dict['updated_at'] = profile_dict['updated_at'].isoformat()
+            await db.user_profiles.insert_one(profile_dict)
+        
+        return {"status": "confirmed", "tx_hash": tx_hash}
+        
+    except Exception as e:
+        logger.error(f"Error confirming crypto payment: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/crypto/prices")
+async def get_current_crypto_prices():
+    """Get current cryptocurrency prices"""
+    try:
+        prices = await get_crypto_prices()
+        
+        # Calculate SOL amounts for each package
+        sol_packages = {}
+        for package_id, package in CRYPTO_PRICING.items():
+            sol_packages[package_id] = {
+                **package,
+                "amount_sol": round(package["amount_usd"] / prices['SOL'], 4)
+            }
+        
+        return {
+            "prices": prices,
+            "packages": sol_packages,
+            "payment_address": PAYMENT_WALLETS["solana"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Error fetching crypto prices: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# User profile routes
+@api_router.post("/users/auth-wallet")
+async def authenticate_wallet(auth_request: WalletAuthRequest):
+    """Authenticate user with wallet"""
+    try:
+        # Get or create user profile
+        user_profile = await db.user_profiles.find_one({"wallet_address": auth_request.wallet_address})
+        
+        if not user_profile:
+            # Create new profile
+            profile = UserProfile(
+                wallet_address=auth_request.wallet_address,
+                wallet_type=auth_request.wallet_type,
+                network=auth_request.network
+            )
+            profile_dict = profile.dict()
+            profile_dict['created_at'] = profile_dict['created_at'].isoformat()
+            profile_dict['updated_at'] = profile_dict['updated_at'].isoformat()
+            await db.user_profiles.insert_one(profile_dict)
+            
+            return {"status": "created", "user": profile_dict}
+        else:
+            # Update existing profile
+            await db.user_profiles.update_one(
+                {"wallet_address": auth_request.wallet_address},
+                {"$set": {"updated_at": datetime.now(timezone.utc).isoformat()}}
+            )
+            return {"status": "authenticated", "user": user_profile}
+        
+    except Exception as e:
+        logger.error(f"Error authenticating wallet: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/users/{wallet_address}/profile")
+async def get_user_profile(wallet_address: str):
+    """Get user profile by wallet address"""
+    try:
+        user_profile = await db.user_profiles.find_one({"wallet_address": wallet_address})
+        if not user_profile:
+            raise HTTPException(status_code=404, detail="User profile not found")
+        
+        # Get user's tokenomics projects
+        projects = await db.tokenomics_projects.find(
+            {"id": {"$in": user_profile.get("tokenomics_projects", [])}}
+        ).to_list(None)
+        
+        # Get payment history
+        payments = await db.crypto_payments.find(
+            {"user_wallet": wallet_address, "status": "confirmed"}
+        ).to_list(None)
+        
+        return {
+            "profile": user_profile,
+            "projects": projects,
+            "payments": payments,
+            "total_projects": len(projects),
+            "total_spent": sum(p.get("amount", 0) for p in payments)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting user profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Payment Routes
 @api_router.post("/payments/checkout/session", response_model=CheckoutSessionResponse)
 async def create_checkout_session(request: Request, package_id: str, origin_url: str):

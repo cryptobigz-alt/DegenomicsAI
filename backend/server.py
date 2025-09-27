@@ -89,7 +89,44 @@ class TokenomicsResponse(BaseModel):
     project: TokenomicsProject
     chart_data: List[Dict[str, Any]]
 
-# Payment Models
+# User Profile Models
+class UserProfile(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    wallet_address: str
+    wallet_type: str  # 'phantom', 'metamask', 'walletconnect'
+    network: str  # 'solana', 'ethereum', 'polygon', etc.
+    email: Optional[str] = None
+    username: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    total_spent: float = 0.0
+    tokenomics_projects: List[str] = []
+
+class CryptoPayment(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_wallet: str
+    amount: float
+    currency: str  # 'SOL', 'ETH', 'USDC', etc.
+    network: str  # 'solana', 'ethereum', etc.
+    tx_hash: Optional[str] = None
+    status: str = "pending"  # pending, confirmed, failed
+    project_id: Optional[str] = None
+    package_type: str  # basic, pro, premium
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    confirmed_at: Optional[datetime] = None
+
+class WalletAuthRequest(BaseModel):
+    wallet_address: str
+    wallet_type: str
+    network: str
+    signature: Optional[str] = None
+    message: Optional[str] = None
+
+class CryptoPaymentRequest(BaseModel):
+    wallet_address: str
+    package_type: str  # basic, pro, premium
+    network: str  # solana, ethereum
+    currency: str  # SOL, ETH, USDC
 class PaymentTransaction(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     session_id: str

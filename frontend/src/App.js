@@ -130,12 +130,12 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleUtilityToggle = (utility) => {
+  const handleUtilityToggle = (utilityId) => {
     setFormData(prev => ({
       ...prev,
-      desired_utility: prev.desired_utility.includes(utility)
-        ? prev.desired_utility.filter(u => u !== utility)
-        : [...prev.desired_utility, utility]
+      desired_utility: prev.desired_utility.includes(utilityId)
+        ? prev.desired_utility.filter(u => u !== utilityId)
+        : [...prev.desired_utility, utilityId]
     }));
   };
 

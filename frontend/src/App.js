@@ -246,7 +246,7 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
             onClick={() => loadTemplate('defi-yield')}
             data-testid="template-defi-yield"
           >
-            DeFi Yield Platform
+            Solana DeFi Protocol
           </button>
           <button 
             type="button" 
@@ -254,7 +254,7 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
             onClick={() => loadTemplate('gamefi-p2e')}
             data-testid="template-gamefi-p2e"
           >
-            GameFi Play-to-Earn
+            GameFi + Compressed NFTs
           </button>
           <button 
             type="button" 
@@ -262,7 +262,7 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
             onClick={() => loadTemplate('dao-governance')}
             data-testid="template-dao-governance"
           >
-            DAO Governance
+            Solana DAO Governance
           </button>
           <button 
             type="button" 
@@ -270,7 +270,7 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
             onClick={() => loadTemplate('nft-marketplace')}
             data-testid="template-nft-marketplace"
           >
-            NFT Marketplace
+            NFT Marketplace + Metaplex
           </button>
         </div>
       </div>

@@ -104,6 +104,10 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
     funding_goals: '',
     planned_raise_size: '',
     desired_utility: [],
+    initial_supply: '100M',
+    distribution_focus: 'balanced',
+    launch_strategy: 'gradual',
+    economic_model: 'standard',
     additional_info: ''
   });
 

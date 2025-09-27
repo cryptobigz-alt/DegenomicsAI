@@ -229,8 +229,8 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
   return (
     <div className="form-container">
       <div className="form-header">
-        <h2 className="form-title">Project Requirements</h2>
-        <p className="form-subtitle">Tell us about your project to generate custom tokenomics</p>
+        <h2 className="form-title">DegenomicsAI Builder</h2>
+        <p className="form-subtitle">Tell us about your project to generate custom tokenomics designed for success</p>
       </div>
 
       {/* Quick Templates Section */}

@@ -163,56 +163,56 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
   const loadTemplate = (templateType) => {
     const templates = {
       'defi-yield': {
-        project_name: 'YieldMax Protocol',
+        project_name: 'SolanaYield Protocol',
         project_type: 'DeFi',
         target_audience: 'both',
-        funding_goals: 'Series A funding for advanced yield optimization',
-        planned_raise_size: '$3M',
+        funding_goals: 'Build the premier yield optimization platform on Solana',
+        planned_raise_size: '$2M',
         desired_utility: ['staking', 'governance', 'revenue sharing', 'fee discounts'],
         initial_supply: '100M',
         distribution_focus: 'community-heavy',
         launch_strategy: 'gradual',
         economic_model: 'deflationary',
-        additional_info: 'Focus on automated yield farming strategies with cross-chain capabilities'
+        additional_info: 'Leveraging Jupiter for optimal yield farming strategies across Solana DeFi protocols'
       },
       'gamefi-p2e': {
-        project_name: 'MetaPlay Arena',
+        project_name: 'SolPlay Arena',
         project_type: 'GameFi',
         target_audience: 'retail',
-        funding_goals: 'Community launch with play-to-earn mechanics',
+        funding_goals: 'First mobile-optimized P2E game on Solana with compressed NFTs',
         planned_raise_size: '$1.5M',
         desired_utility: ['staking', 'marketplace currency', 'nft rewards', 'governance'],
         initial_supply: '1B',
         distribution_focus: 'community-heavy',
         launch_strategy: 'fair-launch',
         economic_model: 'dual-token',
-        additional_info: 'Gaming platform with tournament rewards and NFT marketplace integration'
+        additional_info: 'Using Solana compressed NFTs for scalable in-game assets and Metaplex for marketplace'
       },
       'dao-governance': {
-        project_name: 'DecentralGov DAO',
+        project_name: 'SolGov DAO',
         project_type: 'DAO',
         target_audience: 'institutional',
-        funding_goals: 'Initial governance token distribution',
+        funding_goals: 'Decentralized governance platform for Solana ecosystem projects',
         planned_raise_size: '$2M',
         desired_utility: ['governance', 'staking', 'fee discounts', 'access rights'],
         initial_supply: '100M',
         distribution_focus: 'balanced',
         launch_strategy: 'airdrop',
         economic_model: 'standard',
-        additional_info: 'Decentralized governance platform for protocol decision making'
+        additional_info: 'Integration with Realms for on-chain governance and Squads for treasury management'
       },
       'nft-marketplace': {
-        project_name: 'ArtChain Marketplace',
+        project_name: 'SolanArt Hub',
         project_type: 'NFT',
         target_audience: 'both',
-        funding_goals: 'Marketplace development and creator incentives',
+        funding_goals: 'Next-gen NFT marketplace with creator tools and compressed NFTs',
         planned_raise_size: '$2.5M',
         desired_utility: ['marketplace currency', 'staking', 'fee discounts', 'governance'],
         initial_supply: '500M',
         distribution_focus: 'balanced',
         launch_strategy: 'ido',
         economic_model: 'deflationary',
-        additional_info: 'NFT marketplace with creator royalties and community curation'
+        additional_info: 'Built on Solana with Metaplex Core, supporting both traditional and compressed NFTs'
       }
     };
 

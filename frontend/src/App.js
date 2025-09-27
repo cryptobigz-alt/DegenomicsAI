@@ -80,12 +80,12 @@ const HeroSection = ({ onGetStarted }) => {
           <div className="cyber-card">
             <div className="card-content">
               <div className="metric">
-                <span className="metric-value">79%</span>
-                <span className="metric-label">Success Rate</span>
+                <span className="metric-value">1000+</span>
+                <span className="metric-label">Tokenomics Created</span>
               </div>
               <div className="metric">
-                <span className="metric-value">1000+</span>
-                <span className="metric-label">Projects Designed</span>
+                <span className="metric-value">$50M+</span>
+                <span className="metric-label">Market Cap Designed</span>
               </div>
             </div>
             <div className="card-glow"></div>

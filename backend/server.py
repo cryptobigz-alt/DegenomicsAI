@@ -128,13 +128,23 @@ async def generate_tokenomics_with_claude(request: TokenomicsRequest) -> Tokenom
         - Target Audience: {request.target_audience}
         - Funding Goals: {request.funding_goals}
         - Planned Raise: {request.planned_raise_size or "Not specified"}
+        - Initial Supply: {request.initial_supply or "100M"}
+        - Distribution Focus: {request.distribution_focus or "balanced"}
+        - Launch Strategy: {request.launch_strategy or "gradual"}
+        - Economic Model: {request.economic_model or "standard"}
         - Utility Requirements: {', '.join(request.desired_utility)}
         - Additional Info: {request.additional_info or "None"}
+        
+        Based on these parameters, create a sophisticated tokenomics design that:
+        1. Reflects the {request.distribution_focus} distribution preference
+        2. Incorporates the {request.economic_model} economic model
+        3. Aligns with the {request.launch_strategy} launch strategy
+        4. Optimizes for the {request.target_audience} target audience
         
         Please provide a detailed tokenomics design in the following JSON format:
         
         {{
-            "total_supply": <integer>,
+            "total_supply": <integer based on initial_supply>,
             "allocations": [
                 {{
                     "category": "Team",
@@ -145,23 +155,22 @@ async def generate_tokenomics_with_claude(request: TokenomicsRequest) -> Tokenom
                     "cliff_months": <integer>,
                     "linear_unlock_months": <integer>
                 }},
-                // ... more allocations for Investors, Community, Treasury, Liquidity, etc.
+                // ... more allocations optimized for the distribution_focus
             ],
-            "narrative": "<comprehensive narrative explaining the tokenomics design, utility, and economic model>",
+            "narrative": "<comprehensive narrative explaining the tokenomics design, utility, economic model, and how it addresses the specific parameters>",
             "risks": ["<risk 1>", "<risk 2>", "<risk 3>"],
             "comparable_projects": ["<project 1>", "<project 2>", "<project 3>"]
         }}
         
         Requirements:
-        - Design realistic allocations that sum to 100%
-        - Include 5-7 allocation categories (Team, Investors, Community, Treasury, Liquidity, etc.)
-        - Provide specific vesting schedules with cliffs and linear unlocks
-        - Create a compelling narrative explaining the economic model
-        - Identify 3-5 key risks
-        - List 3 comparable successful projects
-        - Consider the project type and target audience in your recommendations
+        - Adjust allocation percentages based on distribution_focus (community-heavy = more community allocation, etc.)
+        - Include economic model mechanisms (deflationary = token burn, inflationary = staking rewards, etc.)
+        - Tailor launch strategy implications in vesting schedules
+        - Design 6-8 allocation categories appropriate for the project type
+        - Create compelling narrative that explains how parameters influence the design
+        - Consider the specific project type and target audience in recommendations
         
-        Focus on creating a professional, investor-ready tokenomics design.
+        Focus on creating a professional, investor-ready tokenomics design that clearly reflects the chosen parameters.
         """
 
         user_message = UserMessage(text=prompt)

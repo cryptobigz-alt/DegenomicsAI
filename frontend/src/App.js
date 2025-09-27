@@ -143,6 +143,22 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
     }));
   };
 
+  const getUtilityIcon = (utilityId) => {
+    const icons = {
+      'staking': '🔒',
+      'governance': '🗳️',
+      'marketplace currency': '💰',
+      'fee discounts': '💸',
+      'access rights': '🎫',
+      'liquidity mining': '⛏️',
+      'yield farming': '🌾',
+      'token burning': '🔥',
+      'revenue sharing': '💵',
+      'nft rewards': '🎨'
+    };
+    return icons[utilityId] || '⚡';
+  };
+
   const loadTemplate = (templateType) => {
     const templates = {
       'defi-yield': {

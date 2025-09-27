@@ -222,19 +222,91 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
           </div>
 
           <div className="form-group full-width">
-            <label className="form-label">Desired Utility</label>
+            <label className="form-label">Token Utilities & Features</label>
+            <p className="utility-description">Select the utilities your token will provide (hover for details):</p>
             <div className="utility-grid">
               {utilities.map(utility => (
-                <button
-                  key={utility}
-                  type="button"
-                  onClick={() => handleUtilityToggle(utility)}
-                  className={`utility-btn ${formData.desired_utility.includes(utility) ? 'active' : ''}`}
-                  data-testid={`utility-${utility.replace(' ', '-')}`}
-                >
-                  {utility}
-                </button>
+                <div key={utility.id} className="utility-item" title={utility.description}>
+                  <button
+                    type="button"
+                    onClick={() => handleUtilityToggle(utility.id)}
+                    className={`utility-btn ${formData.desired_utility.includes(utility.id) ? 'active' : ''}`}
+                    data-testid={`utility-${utility.id.replace(' ', '-')}`}
+                  >
+                    <span className="utility-name">{utility.name}</span>
+                    <span className="utility-tooltip">{utility.description}</span>
+                  </button>
+                </div>
               ))}
+            </div>
+          </div>
+
+          <div className="advanced-options">
+            <h3 className="advanced-title">Advanced Parameters (Optional)</h3>
+            <div className="advanced-grid">
+              <div className="form-group">
+                <label className="form-label">Initial Token Supply</label>
+                <select
+                  value={formData.initial_supply || '100M'}
+                  onChange={(e) => handleInputChange('initial_supply', e.target.value)}
+                  className="form-select"
+                  data-testid="initial-supply-select"
+                >
+                  <option value="10M">10 Million</option>
+                  <option value="100M">100 Million</option>
+                  <option value="1B">1 Billion</option>
+                  <option value="10B">10 Billion</option>
+                  <option value="custom">Custom Amount</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Token Distribution Focus</label>
+                <select
+                  value={formData.distribution_focus || 'balanced'}
+                  onChange={(e) => handleInputChange('distribution_focus', e.target.value)}
+                  className="form-select"
+                  data-testid="distribution-focus-select"
+                >
+                  <option value="balanced">Balanced Distribution</option>
+                  <option value="community-heavy">Community Focused</option>
+                  <option value="development-heavy">Development Heavy</option>
+                  <option value="investor-friendly">Investor Friendly</option>
+                  <option value="team-conservative">Team Conservative</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Launch Strategy</label>
+                <select
+                  value={formData.launch_strategy || 'gradual'}
+                  onChange={(e) => handleInputChange('launch_strategy', e.target.value)}
+                  className="form-select"
+                  data-testid="launch-strategy-select"
+                >
+                  <option value="fair-launch">Fair Launch</option>
+                  <option value="gradual">Gradual Release</option>
+                  <option value="ido">IDO/Public Sale</option>
+                  <option value="private-first">Private Sale First</option>
+                  <option value="airdrop">Community Airdrop</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Economic Model</label>
+                <select
+                  value={formData.economic_model || 'standard'}
+                  onChange={(e) => handleInputChange('economic_model', e.target.value)}
+                  className="form-select"
+                  data-testid="economic-model-select"
+                >
+                  <option value="standard">Standard Model</option>
+                  <option value="deflationary">Deflationary (Token Burn)</option>
+                  <option value="inflationary">Inflationary (Rewards)</option>
+                  <option value="dual-token">Dual Token System</option>
+                  <option value="rebase">Rebase Mechanism</option>
+                </select>
+              </div>
             </div>
           </div>
 

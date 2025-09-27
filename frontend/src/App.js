@@ -139,6 +139,67 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
     }));
   };
 
+  const loadTemplate = (templateType) => {
+    const templates = {
+      'defi-yield': {
+        project_name: 'YieldMax Protocol',
+        project_type: 'DeFi',
+        target_audience: 'both',
+        funding_goals: 'Series A funding for advanced yield optimization',
+        planned_raise_size: '$3M',
+        desired_utility: ['staking', 'governance', 'revenue sharing', 'fee discounts'],
+        initial_supply: '100M',
+        distribution_focus: 'community-heavy',
+        launch_strategy: 'gradual',
+        economic_model: 'deflationary',
+        additional_info: 'Focus on automated yield farming strategies with cross-chain capabilities'
+      },
+      'gamefi-p2e': {
+        project_name: 'MetaPlay Arena',
+        project_type: 'GameFi',
+        target_audience: 'retail',
+        funding_goals: 'Community launch with play-to-earn mechanics',
+        planned_raise_size: '$1.5M',
+        desired_utility: ['staking', 'marketplace currency', 'nft rewards', 'governance'],
+        initial_supply: '1B',
+        distribution_focus: 'community-heavy',
+        launch_strategy: 'fair-launch',
+        economic_model: 'dual-token',
+        additional_info: 'Gaming platform with tournament rewards and NFT marketplace integration'
+      },
+      'dao-governance': {
+        project_name: 'DecentralGov DAO',
+        project_type: 'DAO',
+        target_audience: 'institutional',
+        funding_goals: 'Initial governance token distribution',
+        planned_raise_size: '$2M',
+        desired_utility: ['governance', 'staking', 'fee discounts', 'access rights'],
+        initial_supply: '100M',
+        distribution_focus: 'balanced',
+        launch_strategy: 'airdrop',
+        economic_model: 'standard',
+        additional_info: 'Decentralized governance platform for protocol decision making'
+      },
+      'nft-marketplace': {
+        project_name: 'ArtChain Marketplace',
+        project_type: 'NFT',
+        target_audience: 'both',
+        funding_goals: 'Marketplace development and creator incentives',
+        planned_raise_size: '$2.5M',
+        desired_utility: ['marketplace currency', 'staking', 'fee discounts', 'governance'],
+        initial_supply: '500M',
+        distribution_focus: 'balanced',
+        launch_strategy: 'ido',
+        economic_model: 'deflationary',
+        additional_info: 'NFT marketplace with creator royalties and community curation'
+      }
+    };
+
+    if (templates[templateType]) {
+      setFormData(templates[templateType]);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);

@@ -150,6 +150,48 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
         <h2 className="form-title">Project Requirements</h2>
         <p className="form-subtitle">Tell us about your project to generate custom tokenomics</p>
       </div>
+
+      {/* Quick Templates Section */}
+      <div className="template-section">
+        <h3 className="template-title">🚀 Quick Start Templates</h3>
+        <p className="template-description">
+          Get started faster with pre-configured templates for common project types
+        </p>
+        <div className="template-grid">
+          <button 
+            type="button" 
+            className="template-btn"
+            onClick={() => loadTemplate('defi-yield')}
+            data-testid="template-defi-yield"
+          >
+            DeFi Yield Platform
+          </button>
+          <button 
+            type="button" 
+            className="template-btn"
+            onClick={() => loadTemplate('gamefi-p2e')}
+            data-testid="template-gamefi-p2e"
+          >
+            GameFi Play-to-Earn
+          </button>
+          <button 
+            type="button" 
+            className="template-btn"
+            onClick={() => loadTemplate('dao-governance')}
+            data-testid="template-dao-governance"
+          >
+            DAO Governance
+          </button>
+          <button 
+            type="button" 
+            className="template-btn"
+            onClick={() => loadTemplate('nft-marketplace')}
+            data-testid="template-nft-marketplace"
+          >
+            NFT Marketplace
+          </button>
+        </div>
+      </div>
       
       <form onSubmit={handleSubmit} className="tokenomics-form" data-testid="tokenomics-form">
         <div className="form-grid">

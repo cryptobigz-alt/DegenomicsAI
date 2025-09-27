@@ -145,6 +145,28 @@ PRICING_PACKAGES = {
     "premium": {"amount": 499.0, "name": "Premium Package", "description": "Complete tokenomics suite with investor deck"}
 }
 
+# Crypto pricing packages
+CRYPTO_PRICING = {
+    "basic": {"amount_usd": 79.0, "name": "Basic Tokenomics", "description": "Standard tokenomics design with PDF and charts"},
+    "pro": {"amount_usd": 199.0, "name": "Pro Tokenomics", "description": "Advanced tokenomics with multiple iterations and comparisons"},
+    "premium": {"amount_usd": 499.0, "name": "Premium Package", "description": "Complete tokenomics suite with investor deck"}
+}
+
+# Payment wallet addresses
+PAYMENT_WALLETS = {
+    "solana": "TokenomicsPaymentWallet123456789",  # Replace with actual wallet
+    "ethereum": "0x1234567890123456789012345678901234567890"  # Replace with actual wallet
+}
+
+async def get_crypto_prices():
+    """Get current cryptocurrency prices - mock implementation"""
+    # This is a mock implementation. In production, integrate with CoinGecko or similar API
+    return {
+        "SOL": 100.0,  # Mock SOL price in USD
+        "ETH": 2500.0,  # Mock ETH price in USD
+        "USDC": 1.0
+    }
+
 async def generate_tokenomics_with_claude(request: TokenomicsRequest) -> TokenomicsProject:
     """Generate comprehensive tokenomics using Claude AI"""
     try:

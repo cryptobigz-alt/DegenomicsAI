@@ -812,8 +812,8 @@ const SuccessPage = () => {
   );
 };
 
-// Main App Component
-const App = () => {
+// Main App Component with Solana Integration
+const AppContent = () => {
   const [currentStep, setCurrentStep] = useState('hero'); // hero, form, results, payment
   const [tokenomicsData, setTokenomicsData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -849,46 +849,61 @@ const App = () => {
     }
   };
 
+  const handlePaymentSuccess = (paymentDetails) => {
+    // Payment successful, show success message or redirect
+    console.log('Payment successful:', paymentDetails);
+    setCurrentStep('results'); // Go back to results with download access
+  };
+
+  return (
+    <main className="main-content">
+      {currentStep === 'hero' && (
+        <HeroSection onGetStarted={handleGetStarted} />
+      )}
+      
+      {currentStep === 'form' && (
+        <TokenomicsForm 
+          onSubmit={handleFormSubmit}
+          isLoading={isLoading}
+        />
+      )}
+      
+      {currentStep === 'results' && tokenomicsData && (
+        <TokenomicsResults 
+          results={tokenomicsData}
+          onPayment={handlePayment}
+          onDownloadPDF={handleDownloadPDF}
+        />
+      )}
+      
+      {currentStep === 'payment' && (
+        <PaymentSection 
+          onSuccess={handlePaymentSuccess}
+          tokenomicsData={tokenomicsData}
+        />
+      )}
+      
+      {error && (
+        <div className="error-message" data-testid="error-message">
+          {error}
+        </div>
+      )}
+    </main>
+  );
+};
+
+const App = () => {
   return (
     <div className="App">
       <AnimatedBackground />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/success" element={<SuccessPage />} />
-          <Route path="/" element={
-            <main className="main-content">
-              {currentStep === 'hero' && (
-                <HeroSection onGetStarted={handleGetStarted} />
-              )}
-              
-              {currentStep === 'form' && (
-                <TokenomicsForm 
-                  onSubmit={handleFormSubmit}
-                  isLoading={isLoading}
-                />
-              )}
-              
-              {currentStep === 'results' && tokenomicsData && (
-                <TokenomicsResults 
-                  results={tokenomicsData}
-                  onPayment={handlePayment}
-                  onDownloadPDF={handleDownloadPDF}
-                />
-              )}
-              
-              {currentStep === 'payment' && (
-                <PaymentSection onSuccess={() => setCurrentStep('hero')} />
-              )}
-              
-              {error && (
-                <div className="error-message" data-testid="error-message">
-                  {error}
-                </div>
-              )}
-            </main>
-          } />
-        </Routes>
-      </BrowserRouter>
+      <SolanaWalletProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/success" element={<SuccessPage />} />
+            <Route path="/" element={<AppContent />} />
+          </Routes>
+        </BrowserRouter>
+      </SolanaWalletProvider>
     </div>
   );
 };

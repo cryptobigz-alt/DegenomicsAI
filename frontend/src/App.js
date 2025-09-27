@@ -235,9 +235,9 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
 
       {/* Quick Templates Section */}
       <div className="template-section">
-        <h3 className="template-title">🚀 Quick Start Templates</h3>
+        <h3 className="template-title">🚀 DegenomicsAI Templates</h3>
         <p className="template-description">
-          Get started faster with pre-configured templates for common project types
+          Launch faster with battle-tested tokenomics templates from successful crypto projects
         </p>
         <div className="template-grid">
           <button 

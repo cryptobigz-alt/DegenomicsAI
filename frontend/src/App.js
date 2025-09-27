@@ -330,21 +330,101 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
 
           <div className="form-group full-width">
             <label className="form-label">Token Utilities & Features</label>
-            <p className="utility-description">Select the utilities your token will provide (hover for details):</p>
-            <div className="utility-grid">
-              {utilities.map(utility => (
-                <div key={utility.id} className="utility-item" title={utility.description}>
-                  <button
-                    type="button"
-                    onClick={() => handleUtilityToggle(utility.id)}
-                    className={`utility-btn ${formData.desired_utility.includes(utility.id) ? 'active' : ''}`}
-                    data-testid={`utility-${utility.id.replace(' ', '-')}`}
-                  >
-                    <span className="utility-name">{utility.name}</span>
-                    <span className="utility-tooltip">{utility.description}</span>
-                  </button>
+            <p className="utility-description">Select the utilities your token will provide to create value and drive adoption:</p>
+            
+            <div className="utilities-categories">
+              <div className="utility-category">
+                <h4 className="category-title">🏦 Financial Features</h4>
+                <div className="category-utilities">
+                  {utilities.filter(u => ['staking', 'revenue sharing', 'fee discounts', 'yield farming', 'liquidity mining'].includes(u.id)).map(utility => (
+                    <div key={utility.id} className="utility-card">
+                      <button
+                        type="button"
+                        onClick={() => handleUtilityToggle(utility.id)}
+                        className={`utility-btn-enhanced ${formData.desired_utility.includes(utility.id) ? 'active' : ''}`}
+                        data-testid={`utility-${utility.id.replace(' ', '-')}`}
+                      >
+                        <div className="utility-header">
+                          <span className="utility-icon">{getUtilityIcon(utility.id)}</span>
+                          <span className="utility-name">{utility.name}</span>
+                          {formData.desired_utility.includes(utility.id) && (
+                            <span className="utility-checkmark">✓</span>
+                          )}
+                        </div>
+                        <p className="utility-desc">{utility.description}</p>
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              <div className="utility-category">
+                <h4 className="category-title">🗳️ Governance & Access</h4>
+                <div className="category-utilities">
+                  {utilities.filter(u => ['governance', 'access rights'].includes(u.id)).map(utility => (
+                    <div key={utility.id} className="utility-card">
+                      <button
+                        type="button"
+                        onClick={() => handleUtilityToggle(utility.id)}
+                        className={`utility-btn-enhanced ${formData.desired_utility.includes(utility.id) ? 'active' : ''}`}
+                        data-testid={`utility-${utility.id.replace(' ', '-')}`}
+                      >
+                        <div className="utility-header">
+                          <span className="utility-icon">{getUtilityIcon(utility.id)}</span>
+                          <span className="utility-name">{utility.name}</span>
+                          {formData.desired_utility.includes(utility.id) && (
+                            <span className="utility-checkmark">✓</span>
+                          )}
+                        </div>
+                        <p className="utility-desc">{utility.description}</p>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="utility-category">
+                <h4 className="category-title">💱 Marketplace & Economy</h4>
+                <div className="category-utilities">
+                  {utilities.filter(u => ['marketplace currency', 'nft rewards', 'token burning'].includes(u.id)).map(utility => (
+                    <div key={utility.id} className="utility-card">
+                      <button
+                        type="button"
+                        onClick={() => handleUtilityToggle(utility.id)}
+                        className={`utility-btn-enhanced ${formData.desired_utility.includes(utility.id) ? 'active' : ''}`}
+                        data-testid={`utility-${utility.id.replace(' ', '-')}`}
+                      >
+                        <div className="utility-header">
+                          <span className="utility-icon">{getUtilityIcon(utility.id)}</span>
+                          <span className="utility-name">{utility.name}</span>
+                          {formData.desired_utility.includes(utility.id) && (
+                            <span className="utility-checkmark">✓</span>
+                          )}
+                        </div>
+                        <p className="utility-desc">{utility.description}</p>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="utility-summary">
+              <span className="summary-text">
+                Selected: {formData.desired_utility.length} utilities
+              </span>
+              {formData.desired_utility.length > 0 && (
+                <div className="selected-utilities">
+                  {formData.desired_utility.map(utilityId => {
+                    const utility = utilities.find(u => u.id === utilityId);
+                    return utility ? (
+                      <span key={utilityId} className="selected-tag">
+                        {getUtilityIcon(utilityId)} {utility.name}
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              )}
             </div>
           </div>
 

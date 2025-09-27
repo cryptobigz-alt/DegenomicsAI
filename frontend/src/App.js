@@ -44,26 +44,27 @@ const HeroSection = ({ onGetStarted }) => {
       <div className="hero-content">
         <div className="hero-text">
           <h1 className="hero-title">
-            <span className="gradient-text">Tokenomics AI Agent</span>
+            <span className="gradient-text">DegenomicsAI</span>
             <br />
-            Design Your Token Economy
+            The Ultimate Tokenomics Design Platform
           </h1>
           <p className="hero-subtitle">
-            Create professional, investor-ready tokenomics designs powered by advanced AI. 
-            Get comprehensive token distribution models, vesting schedules, and economic analysis in minutes.
+            Create professional, investor-ready tokenomics for any crypto project. 
+            Powered by advanced AI to generate comprehensive token distribution models, 
+            vesting schedules, and economic analysis in minutes.
           </p>
           <div className="hero-features">
             <div className="feature-item">
+              <div className="feature-icon">🧠</div>
+              <span>AI-Powered Tokenomics</span>
+            </div>
+            <div className="feature-item">
               <div className="feature-icon">⚡</div>
-              <span>AI-Powered Analysis</span>
+              <span>Instant Generation</span>
             </div>
             <div className="feature-item">
               <div className="feature-icon">📊</div>
-              <span>Visual Charts & Reports</span>
-            </div>
-            <div className="feature-item">
-              <div className="feature-icon">💼</div>
-              <span>Investor-Ready PDFs</span>
+              <span>Professional Reports</span>
             </div>
           </div>
           <button 
@@ -71,7 +72,7 @@ const HeroSection = ({ onGetStarted }) => {
             onClick={onGetStarted}
             data-testid="get-started-btn"
           >
-            <span>Generate Tokenomics</span>
+            <span>Design Your Tokenomics</span>
             <div className="btn-shimmer"></div>
           </button>
         </div>

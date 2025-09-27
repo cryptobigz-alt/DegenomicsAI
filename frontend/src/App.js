@@ -675,65 +675,71 @@ const TokenomicsResults = ({ results, onPayment, onDownloadPDF }) => {
   );
 };
 
-// Payment Component
-const PaymentSection = ({ packageId = 'basic', onSuccess }) => {
-  const [isProcessing, setIsProcessing] = useState(false);
+// Payment Component with Solana Wallet
+const PaymentSection = ({ packageId = 'basic', onSuccess, tokenomicsData }) => {
+  const { publicKey, connected } = useWallet();
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
-  const packages = {
-    basic: { amount: 79, name: 'Basic Package', features: ['PDF Report', 'Charts', 'Token Distribution'] },
-    pro: { amount: 199, name: 'Pro Package', features: ['Multiple Iterations', 'Advanced Analysis', 'Benchmark Comparisons'] },
-    premium: { amount: 499, name: 'Premium Package', features: ['Investor Deck', 'Smart Contract Template', 'Consultation Call'] }
-  };
-
-  const initiatePayment = async () => {
-    setIsProcessing(true);
+  const handleWalletConnect = async (walletAddress) => {
     try {
-      const originUrl = window.location.origin;
-      const response = await axios.post(`${API}/payments/checkout/session`, null, {
-        params: {
-          package_id: packageId,
-          origin_url: originUrl
-        }
+      // Authenticate wallet with backend
+      await axios.post(`${API}/users/auth-wallet`, {
+        wallet_address: walletAddress,
+        wallet_type: 'phantom',
+        network: 'solana'
       });
-      
-      if (response.data.url) {
-        window.location.href = response.data.url;
-      }
     } catch (error) {
-      console.error('Payment error:', error);
-      alert('Payment initialization failed. Please try again.');
-    } finally {
-      setIsProcessing(false);
+      console.error('Wallet authentication failed:', error);
     }
   };
 
-  const selectedPackage = packages[packageId] || packages.basic;
+  const handlePaymentSuccess = (paymentDetails) => {
+    setPaymentSuccess(true);
+    onSuccess?.(paymentDetails);
+    
+    // Link tokenomics to user's profile
+    if (tokenomicsData?.project?.id && publicKey) {
+      linkTokenomicsToUser(tokenomicsData.project.id, publicKey.toString());
+    }
+  };
+
+  const linkTokenomicsToUser = async (projectId, walletAddress) => {
+    try {
+      await axios.post(`${API}/users/${walletAddress}/link-project`, {
+        project_id: projectId
+      });
+    } catch (error) {
+      console.error('Failed to link project to user:', error);
+    }
+  };
+
+  if (paymentSuccess) {
+    return (
+      <div className="payment-success">
+        <div className="success-content">
+          <div className="success-icon">✅</div>
+          <h3>Payment Successful!</h3>
+          <p>Your tokenomics design is ready! You can now download the full report.</p>
+          {tokenomicsData?.project?.id && (
+            <button 
+              className="download-btn"
+              onClick={() => window.open(`${API}/tokenomics/${tokenomicsData.project.id}/pdf`, '_blank')}
+            >
+              Download PDF Report
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="payment-section">
-      <div className="payment-card">
-        <h3 className="payment-title">Complete Your Purchase</h3>
-        <div className="package-details">
-          <h4 className="package-name">{selectedPackage.name}</h4>
-          <div className="package-price">${selectedPackage.amount}</div>
-          <ul className="package-features">
-            {selectedPackage.features.map((feature, index) => (
-              <li key={index} className="feature-item">
-                <span className="feature-check">✓</span>
-                {feature}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <button
-          onClick={initiatePayment}
-          disabled={isProcessing}
-          className="payment-btn"
-          data-testid="payment-btn"
-        >
-          {isProcessing ? 'Processing...' : `Pay $${selectedPackage.amount}`}
-        </button>
-      </div>
+    <div className="payment-section-crypto">
+      <h2 className="payment-title">Complete Your Purchase</h2>
+      <WalletConnection 
+        onWalletConnect={handleWalletConnect}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
     </div>
   );
 };

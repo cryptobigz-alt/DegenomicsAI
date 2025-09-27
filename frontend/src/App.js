@@ -6,6 +6,11 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import "./App.css";
 
+// Solana Wallet Imports
+import SolanaWalletProvider from './components/SolanaWalletProvider';
+import WalletConnection from './components/WalletConnection';
+import { useWallet } from '@solana/wallet-adapter-react';
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 

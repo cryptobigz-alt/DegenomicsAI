@@ -51,13 +51,17 @@ logger = logging.getLogger(__name__)
 
 # Pydantic Models
 class TokenomicsRequest(BaseModel):
-    project_type: str  # NFT, DeFi, L2 infra, GameFi, DAO
+    project_type: str  # NFT, DeFi, L2 infra, GameFi, DAO, Web3 Social, AI/ML Protocol, etc.
     target_audience: str  # retail, institutional, both
     funding_goals: str
     planned_raise_size: Optional[str] = None
     desired_utility: List[str]  # staking, governance, marketplace currency, etc.
     project_name: Optional[str] = None
     additional_info: Optional[str] = None
+    initial_supply: Optional[str] = "100M"
+    distribution_focus: Optional[str] = "balanced"
+    launch_strategy: Optional[str] = "gradual"
+    economic_model: Optional[str] = "standard"
 
 class TokenAllocation(BaseModel):
     category: str

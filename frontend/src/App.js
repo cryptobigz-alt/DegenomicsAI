@@ -107,11 +107,23 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
     additional_info: ''
   });
 
-  const projectTypes = ['DeFi', 'NFT', 'GameFi', 'L2 infra', 'DAO'];
+  const projectTypes = [
+    'DeFi', 'NFT', 'GameFi', 'L2 infra', 'DAO', 
+    'Web3 Social', 'AI/ML Protocol', 'RWA (Real World Assets)', 
+    'Cross-chain Bridge', 'Creator Economy', 'Privacy Protocol'
+  ];
   const audiences = ['retail', 'institutional', 'both'];
   const utilities = [
-    'staking', 'governance', 'marketplace currency', 'fee discounts', 
-    'access rights', 'liquidity mining', 'yield farming'
+    { id: 'staking', name: 'Staking', description: 'Token holders can stake to earn rewards and secure the network' },
+    { id: 'governance', name: 'Governance', description: 'Vote on protocol decisions and parameter changes' },
+    { id: 'marketplace currency', name: 'Marketplace Currency', description: 'Primary medium of exchange within the ecosystem' },
+    { id: 'fee discounts', name: 'Fee Discounts', description: 'Reduced transaction fees for token holders' },
+    { id: 'access rights', name: 'Access Rights', description: 'Premium features and exclusive content access' },
+    { id: 'liquidity mining', name: 'Liquidity Mining', description: 'Earn rewards for providing liquidity to pools' },
+    { id: 'yield farming', name: 'Yield Farming', description: 'Generate yield through various DeFi strategies' },
+    { id: 'token burning', name: 'Token Burning', description: 'Deflationary mechanism to reduce total supply' },
+    { id: 'revenue sharing', name: 'Revenue Sharing', description: 'Share in protocol revenue and fees' },
+    { id: 'nft rewards', name: 'NFT Rewards', description: 'Exclusive NFTs and collectible rewards' }
   ];
 
   const handleInputChange = (field, value) => {

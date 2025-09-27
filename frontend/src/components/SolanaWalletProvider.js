@@ -19,8 +19,7 @@ const SolanaWalletProvider = ({ children }) => {
     : clusterApiUrl(network);
 
   const wallets = [
-    new PhantomWalletAdapter(),
-    new SolflareWalletAdapter()
+    new PhantomWalletAdapter()
   ];
 
   return (

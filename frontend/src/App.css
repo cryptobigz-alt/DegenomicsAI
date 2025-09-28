@@ -1447,6 +1447,18 @@ body {
   }
 }
 
+/* Error Message */
+.error-message {
+  background: rgba(255, 99, 71, 0.1);
+  border: 1px solid #FF6347;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 2rem 0;
+  color: #FF6347;
+  text-align: center;
+  font-weight: 500;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .hero-content {

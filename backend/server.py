@@ -473,30 +473,60 @@ async def get_tokenomics_project(project_id: str):
         raise HTTPException(status_code=404, detail="Project not found")
     return project
 
+@api_router.post("/tokenomics/{project_id}/free-access")
+async def enable_free_access(project_id: str):
+    """Enable free access to tokenomics project for testing"""
+    try:
+        # Update project to allow free access
+        result = await db.tokenomics_projects.update_one(
+            {"id": project_id},
+            {
+                "$set": {
+                    "payment_status": "free_access",
+                    "pdf_generated": True,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        return {"status": "free_access_enabled", "project_id": project_id}
+        
+    except Exception as e:
+        logger.error(f"Error enabling free access: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/tokenomics/{project_id}/pdf")
 async def download_pdf(project_id: str):
-    """Download PDF report for tokenomics project"""
-    project_data = await db.tokenomics_projects.find_one({"id": project_id})
-    if not project_data:
-        raise HTTPException(status_code=404, detail="Project not found")
-    
-    # Convert back to Pydantic model
-    project_data['created_at'] = datetime.fromisoformat(project_data['created_at'])
-    project = TokenomicsProject(**project_data)
-    
-    # Generate PDF
-    pdf_bytes = generate_pdf_report(project)
-    
-    # Save PDF to temporary file
-    pdf_path = f"/tmp/{project_id}_tokenomics.pdf"
-    with open(pdf_path, 'wb') as f:
-        f.write(pdf_bytes)
-    
-    return FileResponse(
-        pdf_path, 
-        media_type='application/pdf',
-        filename=f"{project.project_name}_Tokenomics.pdf"
-    )
+    """Download PDF report for tokenomics project (now supports free access)"""
+    try:
+        project_data = await db.tokenomics_projects.find_one({"id": project_id})
+        if not project_data:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Convert back to Pydantic model
+        project_data['created_at'] = datetime.fromisoformat(project_data['created_at'])
+        project = TokenomicsProject(**project_data)
+        
+        # Generate PDF
+        pdf_bytes = generate_pdf_report(project)
+        
+        # Save PDF to temporary file
+        pdf_path = f"/tmp/{project_id}_tokenomics.pdf"
+        with open(pdf_path, 'wb') as f:
+            f.write(pdf_bytes)
+        
+        return FileResponse(
+            pdf_path, 
+            media_type='application/pdf',
+            filename=f"{project.project_name}_Tokenomics.pdf"
+        )
+        
+    except Exception as e:
+        logger.error(f"Error downloading PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Crypto payment routes
 @api_router.post("/crypto/payment-request")

@@ -1365,16 +1365,86 @@ body {
   line-height: 1.6;
 }
 
-/* Error Message */
-.error-message {
-  background: rgba(255, 99, 71, 0.1);
-  border: 1px solid #FF6347;
-  border-radius: 8px;
-  padding: 1rem;
-  margin: 2rem 0;
-  color: #FF6347;
+/* Free Access Styles */
+.free-access-section {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.action-btn.free-download {
+  background: linear-gradient(135deg, var(--neon-green), #00CC82);
+  color: white;
+  border: none;
+  animation: pulseGlow 2s infinite;
+}
+
+.action-btn.free-download:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 255, 163, 0.5);
+}
+
+.action-btn.secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.action-btn.secondary:hover {
+  border-color: var(--primary-purple);
+  color: var(--primary-purple);
+  background: rgba(220, 31, 255, 0.1);
+}
+
+.free-access-banner {
+  margin-top: 2rem;
+  background: linear-gradient(135deg, rgba(0, 255, 163, 0.1), rgba(0, 255, 163, 0.05));
+  border: 2px solid var(--neon-green);
+  border-radius: 16px;
+  padding: 1.5rem;
   text-align: center;
-  font-weight: 500;
+  animation: borderGlow 3s ease-in-out infinite alternate;
+}
+
+.banner-content h4 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--neon-green);
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 15px var(--neon-green);
+}
+
+.banner-content p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin: 0;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(0, 255, 163, 0.3);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(0, 255, 163, 0.6);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes borderGlow {
+  0% { border-color: var(--neon-green); }
+  100% { border-color: rgba(0, 255, 163, 0.5); }
+}
+
+@media (max-width: 768px) {
+  .free-access-section {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .free-access-section button {
+    width: 100%;
+  }
 }
 
 /* Responsive Design */

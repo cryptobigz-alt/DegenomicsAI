@@ -552,9 +552,10 @@ const TokenomicsForm = ({ onSubmit, isLoading }) => {
   );
 };
 
-// Results Display
+// Results Display with Free Access
 const TokenomicsResults = ({ results, onPayment, onDownloadPDF }) => {
   const { project, chart_data } = results;
+  const [showFreeAccess, setShowFreeAccess] = useState(true); // Enable free access for testing
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -568,18 +569,51 @@ const TokenomicsResults = ({ results, onPayment, onDownloadPDF }) => {
     return null;
   };
 
+  const handleFreeDownload = async () => {
+    if (project?.id) {
+      try {
+        // Mark project as "free access" in database
+        await axios.post(`${API}/tokenomics/${project.id}/free-access`);
+        window.open(`${API}/tokenomics/${project.id}/pdf`, '_blank');
+      } catch (error) {
+        console.error('Download failed:', error);
+        // Fallback - try direct download
+        window.open(`${API}/tokenomics/${project.id}/pdf`, '_blank');
+      }
+    }
+  };
+
   return (
     <div className="results-container" data-testid="tokenomics-results">
       <div className="results-header">
         <h2 className="results-title">{project.project_name}</h2>
         <div className="results-actions">
-          <button 
-            className="action-btn primary"
-            onClick={onPayment}
-            data-testid="proceed-payment-btn"
-          >
-            Get Full Report ($79)
-          </button>
+          {showFreeAccess ? (
+            <div className="free-access-section">
+              <button 
+                className="action-btn free-download"
+                onClick={handleFreeDownload}
+                data-testid="free-download-btn"
+              >
+                🎉 Free Download (Beta)
+              </button>
+              <button 
+                className="action-btn secondary"
+                onClick={() => setShowFreeAccess(false)}
+                data-testid="show-pricing-btn"
+              >
+                View Pricing
+              </button>
+            </div>
+          ) : (
+            <button 
+              className="action-btn primary"
+              onClick={onPayment}
+              data-testid="proceed-payment-btn"
+            >
+              Get Full Report (0.5 SOL)
+            </button>
+          )}
         </div>
       </div>
 
@@ -671,6 +705,15 @@ const TokenomicsResults = ({ results, onPayment, onDownloadPDF }) => {
           </div>
         </div>
       </div>
+
+      {showFreeAccess && (
+        <div className="free-access-banner">
+          <div className="banner-content">
+            <h4>🚀 DegenomicsAI Beta - Free Access!</h4>
+            <p>We're in beta mode! Download your tokenomics report for free and help us improve the platform.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
